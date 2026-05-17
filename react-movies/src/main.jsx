@@ -11,6 +11,10 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MoviesContextProvider from "./contexts/moviesContext";
+import AuthContextProvider from "./contexts/authContext";
+import ProtectedRoutes from "./protectedRoutes";
+import LoginPage from "./pages/loginPage";
+import SignUpPage from "./pages/signupPage";
 import AddMovieReviewPage from './pages/addMovieReviewPage'
 import UpcomingMoviesPage from "./pages/upcomingMoviesPage";
 import TopRatedMoviesPage from "./pages/TopRatedMoviesPage";
@@ -18,8 +22,6 @@ import ActorPage from "./pages/actorPage";
 import PopularPeoplePage from "./pages/popularPeoplePage";
 import TopRatedTVShowsPage from "./pages/topRatedTVShowsPage";
 import TVShowPage from "./pages/tvShowDetailsPage";
-// пиздец доделать топрейтед пейдж
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -127,24 +129,30 @@ const App = () => {
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <SiteHeader />
-          <MoviesContextProvider>
-            <Routes>
-              <Route path="/movies/favorites" element={<FavoriteMoviesPage />} />
-              <Route path="/movies/upcomingMovies" element={<UpcomingMoviesPage />} />  
-              <Route path="/movies/toprated" element ={<TopRatedMoviesPage />} />
-              <Route path="/people/popular" element={<PopularPeoplePage />} />
-              <Route path="/tv/top-rated" element={<TopRatedTVShowsPage />} />
-              <Route path="/tv/:id" element={<TVShowPage />} />
-              <Route path="/movies/:id" element={<MoviePage />} />
-              <Route path="/movies/:id/credits" element={<MoviePage />} />
-              <Route path="/person/:id" element={<ActorPage />} />
-              <Route path="/reviews/:id" element={<MovieReviewPage />} />
-              <Route path="/reviews/form" element={<AddMovieReviewPage />} />
-              <Route path="/" element={<HomePage />} />
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </MoviesContextProvider>
+          <AuthContextProvider>
+            <SiteHeader />
+            <MoviesContextProvider>
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/movies/toprated" element={<TopRatedMoviesPage />} />
+                <Route path="/people/popular" element={<PopularPeoplePage />} />
+                <Route path="/tv/top-rated" element={<TopRatedTVShowsPage />} />
+                <Route path="/tv/:id" element={<TVShowPage />} />
+                <Route path="/movies/:id" element={<MoviePage />} />
+                <Route path="/movies/:id/credits" element={<MoviePage />} />
+                <Route path="/person/:id" element={<ActorPage />} />
+                <Route path="/reviews/:id" element={<MovieReviewPage />} />
+                <Route element={<ProtectedRoutes />}>
+                  <Route path="/movies/favorites" element={<FavoriteMoviesPage />} />
+                  <Route path="/movies/upcomingMovies" element={<UpcomingMoviesPage />} />
+                  <Route path="/reviews/form" element={<AddMovieReviewPage />} />
+                </Route>
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+            </MoviesContextProvider>
+          </AuthContextProvider>
         </BrowserRouter>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

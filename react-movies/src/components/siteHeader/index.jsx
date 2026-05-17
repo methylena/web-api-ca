@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { Link } from "react-router";
+import { AuthContext } from "../../contexts/authContext";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -18,6 +20,7 @@ import Paper from "@mui/material/Paper";
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
 const SiteHeader = () => {
+  const context = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [moviesOpen, setMoviesOpen] = useState(false);
   const open = Boolean(anchorEl);
@@ -26,6 +29,40 @@ const SiteHeader = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   
   const navigate = useNavigate();
+
+  const authButtons = context.isAuthenticated ? (
+    <>
+      <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
+        Welcome, {context.userName}!
+      </Typography>
+      <Button
+        color="inherit"
+        onClick={() => context.signout()}
+        sx={{ border: "1px solid #e7c2cf", px: 2, backgroundColor: "#ffffff" }}
+      >
+        Sign out
+      </Button>
+    </>
+  ) : (
+    <>
+      <Button
+        color="inherit"
+        component={Link}
+        to="/login"
+        sx={{ border: "1px solid #e7c2cf", px: 2, backgroundColor: "#ffffff" }}
+      >
+        Login
+      </Button>
+      <Button
+        color="inherit"
+        component={Link}
+        to="/signup"
+        sx={{ border: "1px solid #e7c2cf", px: 2, backgroundColor: "#ffffff" }}
+      >
+        Sign up
+      </Button>
+    </>
+  );
 
   const menuOptions = [
     { label: "Discover Movies", path: "/" },
@@ -110,6 +147,19 @@ const SiteHeader = () => {
                       {opt.label}
                     </MenuItem>
                   ))}
+                  {context.isAuthenticated ? (
+                    <>
+                      <MenuItem onClick={() => handleMenuSelect("/movies/favorites")}>
+                        Favorites
+                      </MenuItem>
+                      <MenuItem onClick={() => context.signout()}>Sign out</MenuItem>
+                    </>
+                  ) : (
+                    <>
+                      <MenuItem onClick={() => handleMenuSelect("/login")}>Login</MenuItem>
+                      <MenuItem onClick={() => handleMenuSelect("/signup")}>Sign up</MenuItem>
+                    </>
+                  )}
                 </Menu>
               </>
             ) : (
@@ -190,6 +240,11 @@ const SiteHeader = () => {
                     {opt.label}
                   </Button>
                 ))}
+                {!isMobile ? (
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    {authButtons}
+                  </Stack>
+                ) : null}
               </>
             )}
         </Toolbar>

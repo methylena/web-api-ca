@@ -3,19 +3,9 @@ import User from './userModel';
 import asyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken';
 
-const router = express.Router(); 
-// Get all users
-router.get('/', async (req, res) => {
-    const users = await User.find();
-    res.status(200).json(users);
-});
-router.get('/', async (req, res) => {
-    const tasks = await Task.find().populate('userId', 'username');
-    res.status(200).json(tasks);
-});
+const router = express.Router();
 
-// register(Create) User
-// register(Create)/Authenticate User
+// register / authenticate User
 router.post('/', asyncHandler(async (req, res) => {
     const passvalid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     try {
