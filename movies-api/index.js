@@ -1,18 +1,17 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import express from 'express';
-import moviesRouter from './api/movies';   
+import moviesRouter from './api/movies';
+import tvRouter from './api/tv';
+import personRouter from './api/person';
 import './db';
 import cors from 'cors';
-import authenticate from './authenticate';
 
 import usersRouter from './api/users';
-
-dotenv.config();
+import authenticate from './authenticate';
+import favoritesRouter from './api/favorites';
 
 const errHandler = (err, req, res, next) => {
-  /* if the error in development then send stack trace to display whole error,
-  if it's in production then just send error message  */
-  if(process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production') {
     return res.status(500).send(`Something went wrong!`);
   }
   res.status(500).send(`Hey!! You caught the error 👍👍. Here's the details: ${err.stack} `);
@@ -22,16 +21,16 @@ const errHandler = (err, req, res, next) => {
 const app = express();
 
 app.use(cors());
-
-const port = process.env.PORT;
-app.use('/api/movies', moviesRouter); 
-app.use(express.static('public'));
-
 app.use(express.json());
 
+const port = process.env.PORT;
+app.use('/api/movies', moviesRouter);
+app.use('/api/tv', tvRouter);
+app.use('/api/person', personRouter);
+app.use(express.static('public'));
 
-//Users router
 app.use('/api/users', usersRouter);
+app.use('/api/favorites', authenticate, favoritesRouter);
 
 
 
