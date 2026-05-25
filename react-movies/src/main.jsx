@@ -146,7 +146,6 @@ const App = () => {
                 <Route path="/reviews/:id" element={<MovieReviewPage />} />
                 <Route element={<ProtectedRoutes />}>
                   <Route path="/movies/favorites" element={<FavoriteMoviesPage />} />
-                  <Route path="/movies/upcomingMovies" element={<UpcomingMoviesPage />} />
                   <Route path="/reviews/form" element={<AddMovieReviewPage />} />
                 </Route>
                 <Route path="*" element={<Navigate to="/" />} />
